@@ -8,6 +8,10 @@ using namespace std;
 using json = nlohmann::json;
 
 int main() {
+    #ifdef DEBUG
+        cout << "Debug Mode" << endl;
+        cout << endl;
+    #endif
 
     //Read in config
     ifstream configFile("config.json");
@@ -19,6 +23,21 @@ int main() {
             config["irc_server_channel"], config["bot_username"], config["bot_password"]);
 
     irc.establishConnection();
+
+    bool connected = true;
+    while (connected){
+        string message;
+        try {
+            message = move(irc.receive());
+        }
+        catch (EmptyMessage& e){
+            cerr << e.what() << endl;
+            //Restablish the connection
+            irc.closeConnection();
+            irc.establishConnection();
+        }
+        cout << message << endl;
+    }
 
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
+#include <unistd.h>
 #include <iostream>
 
 #include "IRCconnector.h"
@@ -25,7 +26,7 @@ bool IRC::establishConnection(){
     addr.sin_family = AF_INET;
     addr.sin_port = htons((uint16_t)(serverPort));
     addr.sin_addr = *((in_addr*)host->h_addr);
-    int sockd = socket(AF_INET, SOCK_STREAM, 0);
+    sockd = socket(AF_INET, SOCK_STREAM, 0);
     connect(sockd, (struct sockaddr*)&addr, sizeof(addr));
 
     //Create message strings
@@ -34,21 +35,35 @@ bool IRC::establishConnection(){
     string nick = "NICK " + botUsername + '\n';
     string chan = "JOIN #" + channel + '\n';
 
+    //CAP REQ messages so we get enough informtaion
+    send(sockd, "CAP REQ :twitch.tv/membership\n", 30, 0);
+    send(sockd, "CAP REQ :twitch.tv/commands\n",   28, 0);
+    send(sockd, "CAP REQ :twitch.tv/tags\n",       24, 0);
+
     //Send information to connect to channel
  	send(sockd, pass.c_str(), pass.size(), 0);
     send(sockd, nick.c_str(), nick.size(), 0);
     send(sockd, user.c_str(), user.size(), 0);
     send(sockd, chan.c_str(), chan.size(), 0);
 
-    //TODO: move this to receive function
-    //receive messages
-	int connected = 0;
-    char sockbuff[BUFFER_SIZE];
-    while (connected < 1) { 
-            memset(&sockbuff, '\0', BUFFER_SIZE);
-            recv(sockd, sockbuff, BUFFER_SIZE, 0); 
-            cout << sockbuff << endl;
-    }
+   
 
     return true;
+}
+
+bool IRC::closeConnection(){
+	close(sockd);
+	sockd = -1;
+	return true;
+}
+
+string IRC::receive(){
+    //receive messages
+    char sockbuff[BUFFER_SIZE] = {'\0'}; 
+    recv(sockd, sockbuff, BUFFER_SIZE, 0); 
+    //Check for empty message
+    if (sockbuff[0] == '\0'){
+    	throw EmptyMessage();
+    }
+    return sockbuff;
 }

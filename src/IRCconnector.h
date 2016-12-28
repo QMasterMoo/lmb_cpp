@@ -8,7 +8,14 @@ using namespace std;
 //Number of bytes to be received in each message
 //Note: twitch has a max of 500 messages, but we need to account
 //      ":moomasterq!moomasterq@moomasterq.tmi.twitch.tv PRIVMSG" etc.
-const int BUFFER_SIZE = 768;
+//      There is a lot of stuff in front of messages
+const int BUFFER_SIZE = 1024;
+
+struct EmptyMessage : public exception {
+	const char * what() const throw() {
+		return "IRC::received empty message from IRC server";
+	}
+};
 
 class IRC {
 public:
@@ -17,6 +24,13 @@ public:
 
 	//Connect to server, connect
 	bool establishConnection();
+
+	//Close conection, usually used to reopen it later
+	bool closeConnection();
+
+	//Receive message
+	string receive();
+
 private:
 	string serverAdress;
 	string channel;
