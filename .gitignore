@@ -11,3 +11,4 @@ lmb
 
 #Files that contain sensitive information
 oauth
+config.json

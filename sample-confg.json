@@ -1,0 +1,17 @@
+{
+
+	//NOTE: DELETE THIS LINE AND ALL OTHER COMMENTS OTHERWISE IT WILL NOT WORK!
+
+	//Server address that you use to connect to IRC
+	"irc_server_address": "irc.chat.twitch.tv",
+	//Port used to connect to above server
+	"irc_server_port":    6667,
+	//Channel for the bot to join, NOT the bot's username
+	"irc_server_channel": "moomasterq",
+	//Username for the bot
+	"bot_username":       "lessermoobot",
+	//Password to above bot
+	//NOTE: make sure to use the oauth key, it should be "oauth:abc123abc123"
+	//To get the oauth key, go to https://twitchapps.com/tmi/
+	"bot_password":       "oauth:somenumbersandlettersgohere"
+}
