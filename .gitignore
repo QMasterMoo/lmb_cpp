@@ -1,0 +1,13 @@
+#Things that exist in the directory by default
+.cache
+.bash_logout
+.bash_history
+.bashrc
+.profile
+
+#Extra files from compiling
+*.o
+lmb
+
+#Files that contain sensitive information
+oauth
