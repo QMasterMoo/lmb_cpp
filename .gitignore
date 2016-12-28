@@ -4,6 +4,7 @@
 .bash_history
 .bashrc
 .profile
+.gitconfig
 
 #Extra files from compiling
 *.o
