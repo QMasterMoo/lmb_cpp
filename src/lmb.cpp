@@ -21,9 +21,13 @@ int main() {
 	//Connect to IRC server
     IRC irc(config["irc_server_address"], config["irc_server_port"], 
             config["irc_server_channel"], config["bot_username"], config["bot_password"]);
-
-    irc.establishConnection();
-
+    try {
+        irc.establishConnection();
+    }
+    catch (exception &e){
+        cerr << "main::" << e.what() << endl;
+        exit(1);
+    }
     bool connected = true;
     while (connected){
         string message;

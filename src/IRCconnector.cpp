@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <iostream>
+#include <exception>
 
 #include "IRCconnector.h"
 
@@ -16,7 +17,7 @@ IRC::IRC(string serverAdress, int serverPort, string channel, string botUsername
 	this->botPassword = botPassword;
 }
 
-bool IRC::establishConnection(){
+void IRC::establishConnection(){
 	//Resolve the server hostname to an address
     struct hostent *host; 
     host = gethostbyname(serverAdress.c_str());
@@ -27,7 +28,10 @@ bool IRC::establishConnection(){
     addr.sin_port = htons((uint16_t)(serverPort));
     addr.sin_addr = *((in_addr*)host->h_addr);
     sockd = socket(AF_INET, SOCK_STREAM, 0);
-    connect(sockd, (struct sockaddr*)&addr, sizeof(addr));
+    //Make sure we properly connect
+    if (connect(sockd, (struct sockaddr*)&addr, sizeof(addr)) != 0){
+        throw runtime_error("IRC::connection to server failed");
+    }
 
     //Create message strings
     string pass = "PASS " + botPassword + '\n';
@@ -45,16 +49,11 @@ bool IRC::establishConnection(){
     send(sockd, nick.c_str(), nick.size(), 0);
     send(sockd, user.c_str(), user.size(), 0);
     send(sockd, chan.c_str(), chan.size(), 0);
-
-   
-
-    return true;
 }
 
-bool IRC::closeConnection(){
+void IRC::closeConnection(){
 	close(sockd);
 	sockd = -1;
-	return true;
 }
 
 string IRC::receive(){

@@ -22,11 +22,14 @@ public:
 	//Initialize all the needed values
 	IRC(string serverAdress, int serverPort, string channel, string botUsername, string botPassword);
 
-	//Connect to server, connect
-	bool establishConnection();
+	/* Establishes connection to IRC server set in config
+	 * 
+	 * throws runtmie error if unable to connect
+	 */
+	void establishConnection();
 
 	//Close conection, usually used to reopen it later
-	bool closeConnection();
+	void closeConnection();
 
 	//Receive message
 	string receive();
